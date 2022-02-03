@@ -1,0 +1,6 @@
+[submodule "astu"]
+	path = astu
+	url = https://github.com/divotkey/astu.git
+[submodule "astu-box2d"]
+	path = astu-box2d
+	url = https://github.com/divotkey/astu-box2d.git
