@@ -100,7 +100,7 @@ void BallSystem::HandleCollision(Entity& ball, Entity& other)
 
     auto& brick = other.GetComponent<CBrickComponent>();
     brick.hits += 1;
-    EmitSignal(GameEvent(GameEvent::Type::ScoreUpdate, 1));
+    EmitSignal(GameEvent::CreateScoreUpdate(1));
 
     // Destroy Brick
     GetEntityService().RemoveEntity(other);
