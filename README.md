@@ -8,7 +8,14 @@ This repository contains the AST-Utilities repository and ASTU-Box2D as a submod
 
 `git clone --recurse-submodules https://github.com/Woife5/wolfi-breakout-astu.git`.
 
-The boilerplate code requires to have SDL 2.0 (Simple Direct Layer) installed.
+The boilerplate code requires to have SDL 2.0 (Simple Direct Layer) installed. On macOS this is assumed to be located at "/Library/Frameworks/SDL2.framework/Versions/A/SDL2" by astu.
+
+Generate and compile the project by running:
+
+```bash
+cmake .
+make
+```
 
 ## Acknowledgement
 
