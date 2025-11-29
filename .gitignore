@@ -308,6 +308,9 @@ CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
 
+# clangd cache
+.cache
+
 # Built binaries
 wolfibreakout
 

@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 
+# generate a compile_commands.json file for clangd
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # set project name
 project(ASTUGame)
 
