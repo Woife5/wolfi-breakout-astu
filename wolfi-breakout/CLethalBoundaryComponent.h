@@ -1,6 +1,6 @@
 /*
  * Wolfi Breakout
- * 
+ *
  * Copyright (c) 2021 Wolfgang Schwendtbauer. All rights reserved.
  */
 
@@ -9,19 +9,18 @@
 
 class CLethalBoundaryComponent : public astu::EntityComponent {
 public:
-	float maxSpeed;
+  float maxSpeed;
 
-	/**
-	 * Constructor.
-	 */
-	CLethalBoundaryComponent( float maxSpeed = 0.1f)
-	: maxSpeed(maxSpeed) {
-		// Intentionally left empty.
-	}
+  /**
+   * Constructor.
+   */
+  CLethalBoundaryComponent(float maxSpeed = 0.1f) : maxSpeed(maxSpeed) {
+    // Intentionally left empty.
+  }
 
-	// Inherited via EntityComponent
-	virtual std::shared_ptr<EntityComponent> Clone() override {
-		// Create copy using copy-constructor.
-		return std::make_shared<CLethalBoundaryComponent>(*this);
-	}    
+  // Inherited via EntityComponent
+  virtual std::shared_ptr<EntityComponent> Clone() override {
+    // Create copy using copy-constructor.
+    return std::make_shared<CLethalBoundaryComponent>(*this);
+  }
 };

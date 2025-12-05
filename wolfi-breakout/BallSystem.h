@@ -1,6 +1,6 @@
 /*
  * Wolfi Breakout
- * 
+ *
  * Copyright (c) 2021 Wolfgang Schwendtbauer. All rights reserved.
  */
 
@@ -15,15 +15,12 @@
 #include <AstuSuite2D.h>
 #include <Math/Random.h>
 
-class BallSystem 
-  : public astu::BaseService
-  , private astu::IteratingEntitySystem
-  , private astu2d::CollisionListener
-  , private astu::SignalEmitter<GameEvent>
-  , private astu::TimeClient
-{
+class BallSystem : public astu::BaseService,
+                   private astu::IteratingEntitySystem,
+                   private astu2d::CollisionListener,
+                   private astu::SignalEmitter<GameEvent>,
+                   private astu::TimeClient {
 public:
-
   // Constructor.
   BallSystem(int updatePriority = astu::Priority::Normal);
 
@@ -39,15 +36,16 @@ private:
   bool tiltBall;
   bool allowTilt;
 
-  void HandleCollision(astu::Entity& ball, astu::Entity& other);
+  void HandleCollision(astu::Entity &ball, astu::Entity &other);
 
   // Inherited via BaseService
   virtual void OnStartup() override;
   virtual void OnShutdown() override;
 
   // Inherited via IteratingEntitySystem
-  virtual void ProcessEntity(astu::Entity& entity) override;
-  
+  virtual void ProcessEntity(astu::Entity &entity) override;
+
   // Inherited via CollisionListener
-  virtual bool OnCollision(astu::Entity& entityA, astu::Entity& entityB) override;
+  virtual bool OnCollision(astu::Entity &entityA,
+                           astu::Entity &entityB) override;
 };

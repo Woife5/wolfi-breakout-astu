@@ -1,14 +1,14 @@
 /*
  * Wolfi Breakout
- * 
+ *
  * Copyright (c) 2021 Wolfgang Schwendtbauer. All rights reserved.
  */
 
 // Local includes
 #include "BallSystem.h"
 #include "CBallComponent.h"
-#include "CLethalBoundaryComponent.h"
 #include "CBrickComponent.h"
+#include "CLethalBoundaryComponent.h"
 
 // AST Utilities includes
 #include <AstuSuite2D.h>
@@ -23,63 +23,59 @@ using namespace std;
 const EntityFamily BallSystem::FAMILY = EntityFamily::Create<CBallComponent>();
 
 BallSystem::BallSystem(int updatePriority)
-  : BaseService("BallSystem")
-  , IteratingEntitySystem(FAMILY, updatePriority)    
-{
+    : BaseService("BallSystem"), IteratingEntitySystem(FAMILY, updatePriority) {
   // Intentionally left empty.
 }
 
-void BallSystem::OnStartup()
-{
-    tiltBallAction = ASTU_SERVICE(InputMappingService).BindAction("TiltBall");
-    tiltBallAction->SetDelegate([this](ActionBinding &binding){
-        if (binding.IsPressed()) {
-            tiltBall = true;
-        }
-    });
-    tiltBall = false;
-    lastBallTilt = 0.0f;
-    allowTilt = true;
+void BallSystem::OnStartup() {
+  tiltBallAction = ASTU_SERVICE(InputMappingService).BindAction("TiltBall");
+  tiltBallAction->SetDelegate([this](ActionBinding &binding) {
+    if (binding.IsPressed()) {
+      tiltBall = true;
+    }
+  });
+  tiltBall = false;
+  lastBallTilt = 0.0f;
+  allowTilt = true;
 }
 
-void BallSystem::OnShutdown()
-{
+void BallSystem::OnShutdown() {
   ASTU_SERVICE(InputMappingService).RemoveActionBinding(tiltBallAction);
   tiltBallAction = nullptr;
 }
 
-void BallSystem::ProcessEntity(Entity & entity)
-{
-  auto& body = entity.GetComponent<CBody>();
-  //std::cout << "Velocity: " << body.GetLinearVelocity().x << "," << body.GetLinearVelocity().y << std::endl;
+void BallSystem::ProcessEntity(Entity &entity) {
+  auto &body = entity.GetComponent<CBody>();
+  // std::cout << "Velocity: " << body.GetLinearVelocity().x << "," <<
+  // body.GetLinearVelocity().y << std::endl;
 
-
-  // Sometimes the ball gets stuck in a vertical or horizontal position when it hits an object with too little speed
-  // If this happens vertically, its no problem since the ball will come back to the ground eventually
-  // If it happens horizonatlly, the ball needs to be given a litte push in order to keep playing the game
-  if(abs(body.GetLinearVelocity().y) < 0.1f) {
+  // Sometimes the ball gets stuck in a vertical or horizontal position when it
+  // hits an object with too little speed If this happens vertically, its no
+  // problem since the ball will come back to the ground eventually If it
+  // happens horizonatlly, the ball needs to be given a litte push in order to
+  // keep playing the game
+  if (abs(body.GetLinearVelocity().y) < 0.1f) {
     lastBallTilt = GetAbsoluteTime();
     allowTilt = false;
     std::cout << "Auto-tilt has been activated!" << std::endl;
 
-    auto& pose = entity.GetComponent<CPose>();
+    auto &pose = entity.GetComponent<CPose>();
     float yPos = pose.transform.GetTranslationY();
 
-    if(yPos >= 0) {
+    if (yPos >= 0) {
       body.ApplyForce(Vector2f(0.0f, -5.0f));
     } else {
       body.ApplyForce(Vector2f(0.0f, 5.0f));
     }
-
   }
 
-  if(!allowTilt && GetAbsoluteTime() > lastBallTilt + BALL_TILT_TIMEOUT) {
+  if (!allowTilt && GetAbsoluteTime() > lastBallTilt + BALL_TILT_TIMEOUT) {
     allowTilt = true;
     tiltBall = false;
     std::cout << "Tilting is allowed again" << std::endl;
   }
 
-  if(allowTilt && tiltBall) {
+  if (allowTilt && tiltBall) {
     lastBallTilt = GetAbsoluteTime();
     allowTilt = false;
     tiltBall = false;
@@ -94,47 +90,49 @@ void BallSystem::ProcessEntity(Entity & entity)
   }
 }
 
-void BallSystem::HandleCollision(Entity& ball, Entity& other)
-{
+void BallSystem::HandleCollision(Entity &ball, Entity &other) {
   if (other.HasComponent<CBrickComponent>()) {
 
-    auto& brick = other.GetComponent<CBrickComponent>();
+    auto &brick = other.GetComponent<CBrickComponent>();
     brick.hits += 1;
     EmitSignal(GameEvent::CreateScoreUpdate(1));
 
     // Destroy Brick
     GetEntityService().RemoveEntity(other);
-    
-    if(brick.hits >= brick.health) {
-      EmitSignal(GameEvent(GameEvent::Type::BrickDestroyed, other.GetComponent<CPose>().transform.GetTranslation()));
+
+    if (brick.hits >= brick.health) {
+      EmitSignal(
+          GameEvent(GameEvent::Type::BrickDestroyed,
+                    other.GetComponent<CPose>().transform.GetTranslation()));
       return;
     }
 
     // Add a new brick with a different color
-    // This is done because i cannot figure out how to change the color of an entity
-    // Ideally i would just change the bricks color and only remove it once it is completley destroyed
+    // This is done because i cannot figure out how to change the color of an
+    // entity Ideally i would just change the bricks color and only remove it
+    // once it is completley destroyed
     int health = brick.health - brick.hits;
-    auto entity = ASTU_SERVICE(EntityFactoryService).CreateEntity(to_string(health) + "HBrick");
-    auto& pose = entity->GetComponent<CPose>();
+    auto entity = ASTU_SERVICE(EntityFactoryService)
+                      .CreateEntity(to_string(health) + "HBrick");
+    auto &pose = entity->GetComponent<CPose>();
     float x = other.GetComponent<CPose>().transform.GetTranslationX();
     float y = other.GetComponent<CPose>().transform.GetTranslationY();
     pose.transform.SetTranslation(x, y);
 
     GetEntityService().AddEntity(entity);
 
-  }else if (other.HasComponent<CLethalBoundaryComponent>()) {
-      const auto& pos = ball.GetComponent<CPose>().transform.GetTranslation();
-      EmitSignal(GameEvent(GameEvent::Type::BallDestroyed, pos));
-      GetEntityService().RemoveEntity(ball);
+  } else if (other.HasComponent<CLethalBoundaryComponent>()) {
+    const auto &pos = ball.GetComponent<CPose>().transform.GetTranslation();
+    EmitSignal(GameEvent(GameEvent::Type::BallDestroyed, pos));
+    GetEntityService().RemoveEntity(ball);
   }
 }
 
-bool BallSystem::OnCollision(Entity& entityA, Entity& entityB)
-{
-    if (entityA.HasComponent<CBallComponent>()) {
-        HandleCollision(entityA, entityB);
-    } else if (entityB.HasComponent<CBallComponent>()) {
-        HandleCollision(entityB, entityA);
-    }
-    return false;
+bool BallSystem::OnCollision(Entity &entityA, Entity &entityB) {
+  if (entityA.HasComponent<CBallComponent>()) {
+    HandleCollision(entityA, entityB);
+  } else if (entityB.HasComponent<CBallComponent>()) {
+    HandleCollision(entityB, entityA);
+  }
+  return false;
 }

@@ -1,6 +1,6 @@
 /*
  * Wolfi Breakout
- * 
+ *
  * Copyright (c) 2021 Wolfgang Schwendtbauer. All rights reserved.
  */
 
@@ -13,14 +13,11 @@ using namespace astu2d;
 using namespace astu;
 using namespace std;
 
-GameModeService::GameModeService()
-  : BaseService("Game Mode Service")
-{
-    // Intentionally left empty.    
+GameModeService::GameModeService() : BaseService("Game Mode Service") {
+  // Intentionally left empty.
 }
 
-void GameModeService::OnStartup()
-{
+void GameModeService::OnStartup() {
   // Configure camera.
   GetCamera().ShowFitting(VIEW_WIDTH, VIEW_HEIGHT);
 
@@ -33,31 +30,27 @@ void GameModeService::OnStartup()
   LoadLevel(levelId);
 }
 
-void GameModeService::OnShutdown()
-{
-  ASTU_SERVICE(EntityService).RemoveAll();
-}
+void GameModeService::OnShutdown() { ASTU_SERVICE(EntityService).RemoveAll(); }
 
-shared_ptr<Entity> GameModeService::AddEntity(const string& proto, float x, float y, float phiDeg)
-{
+shared_ptr<Entity> GameModeService::AddEntity(const string &proto, float x,
+                                              float y, float phiDeg) {
   auto entity = ASTU_SERVICE(EntityFactoryService).CreateEntity(proto);
-  auto& pose = entity->GetComponent<CPose>();
+  auto &pose = entity->GetComponent<CPose>();
   pose.transform.SetTranslation(x, y);
   if (phiDeg != 0) {
-      pose.transform.SetRotationDeg(phiDeg);
+    pose.transform.SetRotationDeg(phiDeg);
   }
 
   ASTU_SERVICE(EntityService).AddEntity(entity);
   return entity;
 }
 
-void GameModeService::LoadLevel(int level)
-{
+void GameModeService::LoadLevel(int level) {
   // ---------------------------------------------------------------------------
   // There are currently only three levels because there is no level creator yet
   // and bricks can have at most 3 Hitpoints.
   // This part will be removed as soon as the level creator is implemented.
-  if(level <= 0 || level > 3) {
+  if (level <= 0 || level > 3) {
     EmitSignal(GameEvent::CreateLifeUpdate(-numLives));
     return;
   }
@@ -77,22 +70,20 @@ void GameModeService::LoadLevel(int level)
 
   // Add paddle and ball.
   AddEntity("Paddle", PADDLE_START_X, PADDLE_START_Y);
-  AddEntity("BallIndicator", PADDLE_START_X, PADDLE_START_Y - BALL_RADIUS*2);
+  AddEntity("BallIndicator", PADDLE_START_X, PADDLE_START_Y - BALL_RADIUS * 2);
   numBalls = 1;
 
   // Add bricks for selected level.
   for (int i = 0; i < 9; i++) {
     for (int j = 0; j < 15; j++) {
-      AddEntity(to_string(level) + "HBrick", -7.0f + j, -3.5f + (i/2.0f));
+      AddEntity(to_string(level) + "HBrick", -7.0f + j, -3.5f + (i / 2.0f));
     }
   }
 
   numBricks = 9 * 15;
-
 }
 
-bool GameModeService::OnSignal(const GameEvent& signal)
-{
+bool GameModeService::OnSignal(const GameEvent &signal) {
   switch (signal.type) {
 
   case GameEvent::Type::BallDestroyed:
@@ -106,15 +97,15 @@ bool GameModeService::OnSignal(const GameEvent& signal)
   case GameEvent::Type::BrickDestroyed:
     --numBricks;
 
-    if(numBricks <= 0) {
+    if (numBricks <= 0) {
       LoadLevel(++levelId);
     }
     break;
-  
+
   case GameEvent::Type::LifeUpdate:
     numLives += signal.intValue;
 
-    if(numLives <= 0) {
+    if (numLives <= 0) {
       std::cout << "Game over" << std::endl;
       std::cout << "Final score: " << score << std::endl;
       break;
@@ -122,18 +113,21 @@ bool GameModeService::OnSignal(const GameEvent& signal)
 
     // Reset ball
     FireSignal(GameEvent::Type::ResetBall);
-    AddEntity("BallIndicator", PADDLE_START_X, PADDLE_START_Y - BALL_RADIUS*2);
+    AddEntity("BallIndicator", PADDLE_START_X,
+              PADDLE_START_Y - BALL_RADIUS * 2);
 
     break;
-  
+
   case GameEvent::Type::ScoreUpdate:
     score += signal.intValue;
     break;
-  
+
   case GameEvent::Type::BallFired:
-    AddEntity("Ball", signal.position.x, signal.position.y ); // Make the ball start at the correct position.
+    AddEntity(
+        "Ball", signal.position.x,
+        signal.position.y); // Make the ball start at the correct position.
     break;
-  
+
   case GameEvent::Type::ResetBall:
     break;
   }
