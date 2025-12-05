@@ -17,6 +17,8 @@ cmake .
 make
 ```
 
+You may need to run `cmake . -DCMAKE_POLICY_VERSION_MINIMUM=3.5` if you are using a newer version of cmake.
+
 ## Acknowledgement
 
 ### Simple DirectMedia Layer

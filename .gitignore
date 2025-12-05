@@ -308,6 +308,10 @@ CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
 
+# Submodules
+astu/
+astu_box2d/
+
 # clangd cache
 .cache
 
