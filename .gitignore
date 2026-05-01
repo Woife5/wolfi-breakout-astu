@@ -308,13 +308,14 @@ CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
 
-# Submodules
-astu/
-astu_box2d/
-
 # clangd cache
 .cache
 
 # Built binaries
-wolfibreakout
+/wolfibreakout/
+
+# Stale in-source build dirs created by older add_subdirectory(... <name>)
+# binary-dir layouts. Sources now live under third_party/.
+/astu/
+/astu_box2d/
 
