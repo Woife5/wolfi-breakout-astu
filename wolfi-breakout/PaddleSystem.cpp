@@ -1,13 +1,13 @@
 /*
  * Wolfi Breakout
- * 
+ *
  * Copyright (c) 2021 Wolfgang Schwendtbauer. All rights reserved.
  */
 
 // Local includes
 #include "PaddleSystem.h"
-#include "CPaddleComponent.h"
 #include "CBallComponent.h"
+#include "CPaddleComponent.h"
 #include "Constants.h"
 
 // AST Utilities includes
@@ -24,7 +24,7 @@ const EntityFamily PaddleSystem::FAMILY = EntityFamily::Create<CPaddleComponent>
 
 PaddleSystem::PaddleSystem(int updatePriority)
     : BaseService("PaddleSystem")
-    , IteratingEntitySystem(FAMILY, updatePriority)    
+    , IteratingEntitySystem(FAMILY, updatePriority)
 {
     // Intentionally left empty.
 }
@@ -33,7 +33,7 @@ void PaddleSystem::OnStartup()
 {
     paddleAxis = ASTU_SERVICE(InputMappingService).BindAxis("Paddle");
     fireBallAction = ASTU_SERVICE(InputMappingService).BindAction("FireBall");
-    fireBallAction->SetDelegate([this](ActionBinding &binding){
+    fireBallAction->SetDelegate([this](ActionBinding& binding) {
         if (binding.IsPressed()) {
             fireInitialBall = true;
         }
@@ -50,15 +50,15 @@ void PaddleSystem::OnShutdown()
     fireBallAction = nullptr;
 }
 
-void PaddleSystem::ProcessEntity(Entity & entity)
+void PaddleSystem::ProcessEntity(Entity& entity)
 {
     // Get body component of the paddle.
     auto& paddle = entity.GetComponent<CPaddleComponent>();
     auto& pose = entity.GetComponent<CPose>();
 
-    if( !initialBallFired && paddle.maxSpeed == -1.0f ) {
+    if (!initialBallFired && paddle.maxSpeed == -1.0f) {
         // If the initial ball should be fired, do so now.
-        if( fireInitialBall ) {
+        if (fireInitialBall) {
             initialBallFired = true;
             // Get the ball component.
             EmitSignal(GameEvent(GameEvent::Type::BallFired, pose.transform.GetTranslation()));
@@ -81,7 +81,7 @@ void PaddleSystem::ProcessEntity(Entity & entity)
     float oldPos = pose.transform.GetTranslationX();
 
     // Check if the paddle is out of bounds.
-    if(oldPos + paddleForce > paddle.maxX) {
+    if (oldPos + paddleForce > paddle.maxX) {
         paddleForce = paddle.maxX - oldPos;
     } else if (oldPos + paddleForce < paddle.minX) {
         paddleForce = paddle.minX - oldPos;
@@ -102,7 +102,7 @@ bool PaddleSystem::OnCollision(Entity& entityA, Entity& entityB)
 
 void PaddleSystem::HandleCollision(Entity& paddle, Entity& other)
 {
-    if(other.HasComponent<CBallComponent>()) {
+    if (other.HasComponent<CBallComponent>()) {
         // Handle collision between ball and paddle.
         auto& paddlePose = paddle.GetComponent<CPose>();
         auto& ballPose = other.GetComponent<CPose>();
@@ -129,27 +129,14 @@ bool PaddleSystem::OnSignal(const GameEvent& signal)
 {
     switch (signal.type) {
 
-    case GameEvent::Type::BallDestroyed:
-        break;
-
-    case GameEvent::Type::BrickDestroyed:
-        break;
-
-    case GameEvent::Type::LifeUpdate:
-        break;
-
-    case GameEvent::Type::ScoreUpdate:
-        break;
-
-    case GameEvent::Type::BallFired:
-        break;
-
     case GameEvent::Type::ResetBall:
         initialBallFired = false;
         fireInitialBall = false;
         break;
 
+    default:
+        break;
     }
 
-  return false;
+    return false;
 }
