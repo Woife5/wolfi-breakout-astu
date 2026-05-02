@@ -32,7 +32,7 @@
 #define PADDLE_COLOR                astu::RalColors::TrafficWhite
 #define PADDLE_WIDTH                1.7f
 #define PADDLE_HEIGHT               0.2f
-#define PADDLE_SPEED                0.1f
+#define PADDLE_SPEED                6.0f
 #define PADDLE_START_X              0.0f
 #define PADDLE_START_Y              4.1f
 

@@ -18,7 +18,8 @@ class PaddleSystem : public astu::BaseService,
                      private astu::IteratingEntitySystem,
                      private astu2d::CollisionListener,
                      private astu::SignalListener<GameEvent>,
-                     private astu::SignalEmitter<GameEvent> {
+                     private astu::SignalEmitter<GameEvent>,
+                     private astu::TimeClient {
 public:
   // Constructor.
   PaddleSystem(int updatePriority = astu::Priority::Normal);

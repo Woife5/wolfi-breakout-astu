@@ -75,7 +75,8 @@ void PaddleSystem::ProcessEntity(Entity& entity)
         return;
     }
 
-    float paddleForce = paddleAxis->GetValue() * paddle.maxSpeed;
+    // Scale by elapsed frame time so paddle speed is FPS-independent.
+    float paddleForce = paddleAxis->GetValue() * paddle.maxSpeed * GetElapsedTimeF();
     float oldPos = pose.transform.GetTranslationX();
 
     // Check if the paddle is out of bounds.
