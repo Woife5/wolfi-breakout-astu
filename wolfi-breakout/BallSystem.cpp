@@ -6,8 +6,9 @@
 
 // Local includes
 #include "BallSystem.h"
+#include "brick/BrickEvent.h"
+#include "brick/CBrickComponent.h"
 #include "CBallComponent.h"
-#include "CBrickComponent.h"
 #include "CLethalBoundaryComponent.h"
 
 // AST Utilities includes
@@ -96,34 +97,9 @@ void BallSystem::ProcessEntity(Entity& entity)
 void BallSystem::HandleCollision(Entity& ball, Entity& other)
 {
     if (other.HasComponent<CBrickComponent>()) {
-
-        auto& brick = other.GetComponent<CBrickComponent>();
-        brick.hits += 1;
-        EmitSignal(GameEvent::CreateScoreUpdate(1));
-
-        // Destroy Brick
-        GetEntityService().RemoveEntity(other);
-
-        if (brick.hits >= brick.health) {
-            EmitSignal(
-                GameEvent(GameEvent::Type::BrickDestroyed,
-                    other.GetComponent<CPose>().transform.GetTranslation()));
-            return;
-        }
-
-        // Add a new brick with a different color
-        // This is done because i cannot figure out how to change the color of an
-        // entity Ideally i would just change the bricks color and only remove it
-        // once it is completley destroyed
-        auto& position = other.GetComponent<CPose>().transform.GetTranslation();
-
-        int health = brick.health - brick.hits;
-        auto entity = ASTU_SERVICE(EntityFactoryService).CreateEntity(to_string(health) + "HBrick");
-        auto& pose = entity->GetComponent<CPose>();
-        pose.transform.SetTranslation(position.x, position.y);
-
-        GetEntityService().AddEntity(entity);
-
+        // Brick lifecycle is owned by BrickSystem; just notify it.
+        ASTU_SERVICE(BrickEventService).FireSignal(
+            BrickEvent{ BrickEvent::Type::Hit, &other });
     } else if (other.HasComponent<CLethalBoundaryComponent>()) {
         const auto& pos = ball.GetComponent<CPose>().transform.GetTranslation();
         EmitSignal(GameEvent(GameEvent::Type::BallDestroyed, pos));

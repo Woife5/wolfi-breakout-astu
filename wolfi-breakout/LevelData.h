@@ -1,7 +1,7 @@
 #pragma once
-#include <vector>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 extern std::vector<std::vector<std::string>> levels;
-extern std::unordered_map<char, std::string> tileToEntity;
+extern std::unordered_map<char, int> tileToHp;

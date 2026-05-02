@@ -7,7 +7,7 @@ project(WolfiBreakout)
 set(CMAKE_CXX_STANDARD 17)
 
 # add executable
-file(GLOB SOURCES "*.cpp")
+file(GLOB_RECURSE SOURCES "*.cpp")
 add_executable(WolfiBreakout ${SOURCES})
 
 # specify required libraries

@@ -6,6 +6,8 @@
 
 // Local includes
 #include "BallSystem.h"
+#include "brick/BrickEvent.h"
+#include "brick/BrickSystem.h"
 #include "Constants.h"
 #include "EntityPrototypeService.h"
 #include "GameEvent.h"
@@ -50,6 +52,8 @@ int main() {
   ASTU_CREATE_AND_ADD_SERVICE(PaddleSystem);
   ASTU_CREATE_AND_ADD_SERVICE(BallSystem);
   ASTU_CREATE_AND_ADD_SERVICE(GameEventService);
+  ASTU_CREATE_AND_ADD_SERVICE(BrickEventService);
+  ASTU_CREATE_AND_ADD_SERVICE(BrickSystem);
 
   ASTU_SERVICE(PhysicsSystem).SetGravityVector(GRAVITY);
 

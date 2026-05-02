@@ -1,10 +1,12 @@
 #include "LevelData.h"
 
-std::unordered_map<char, std::string> tileToEntity = {
-    { '1', "1HBrick" },
-    { '2', "2HBrick" },
-    { '3', "3HBrick" },
+std::unordered_map<char, int> tileToHp = {
+    { '1', 1 },
+    { '2', 2 },
+    { '3', 3 },
 };
+
+// Max 14 rows per level make sense. Otherwise the bricks are below the paddle.
 
 std::vector<std::vector<std::string>> levels = {
     {

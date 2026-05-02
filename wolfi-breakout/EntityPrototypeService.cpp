@@ -7,7 +7,7 @@
 // Local includes
 #include "EntityPrototypeService.h"
 #include "CBallComponent.h"
-#include "CBrickComponent.h"
+#include "brick/CBrickComponent.h"
 #include "CLethalBoundaryComponent.h"
 #include "CPaddleComponent.h"
 #include "Constants.h"
@@ -46,10 +46,9 @@ void EntityPrototypeService::OnStartup() {
   entityFactory.RegisterPrototype("Ball", CreateBall());
   entityFactory.RegisterPrototype("BallIndicator", CreateBallIndicator());
 
-  // Register simple brick entity prototype.
-  entityFactory.RegisterPrototype("1HBrick", CreateBrick(1, BRICK_1_COLOR));
-  entityFactory.RegisterPrototype("2HBrick", CreateBrick(2, BRICK_2_COLOR));
-  entityFactory.RegisterPrototype("3HBrick", CreateBrick(3, BRICK_3_COLOR));
+  // Register a single, HP-agnostic brick prototype. Health and color are set
+  // post-spawn via InitBrick().
+  entityFactory.RegisterPrototype("RegularBrick", CreateBrick());
 }
 
 void EntityPrototypeService::OnShutdown() {
@@ -170,14 +169,15 @@ shared_ptr<Entity> EntityPrototypeService::CreateBallIndicator() {
   return entity;
 }
 
-shared_ptr<Entity> EntityPrototypeService::CreateBrick(int hits,
-                                                       Color4f color) {
+shared_ptr<Entity> EntityPrototypeService::CreateBrick() {
   auto entity = make_shared<Entity>();
   entity->AddComponent(make_shared<CPose>());
 
+  // Initial color is a placeholder; InitBrick() will set the real color
+  // matching the brick's starting health.
   entity->AddComponent(
       make_shared<CScene>(PolylineBuilder()
-                              .Color(color)
+                              .Color(BRICK_1_COLOR)
                               .Name("Brick")
                               .VertexBuffer(ShapeGenerator().GenRectangle(
                                   BRICK_WIDTH, BRICK_HEIGHT))
@@ -194,7 +194,7 @@ shared_ptr<Entity> EntityPrototypeService::CreateBrick(int hits,
           .MaskBits(BALL_CATEGORY)
           .Build());
 
-  entity->AddComponent(make_shared<CBrickComponent>(hits));
+  entity->AddComponent(make_shared<CBrickComponent>(1));
 
   return entity;
 }

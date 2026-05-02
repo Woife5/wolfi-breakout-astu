@@ -29,7 +29,5 @@ private:
   std::shared_ptr<astu::Entity> CreatePaddle();
   std::shared_ptr<astu::Entity> CreateBall();
   std::shared_ptr<astu::Entity> CreateBallIndicator();
-  std::shared_ptr<astu::Entity>
-  CreateBrick(int hits = 1,
-              astu::Color4f color = astu::RalColors::TrafficWhite);
+  std::shared_ptr<astu::Entity> CreateBrick();
 };

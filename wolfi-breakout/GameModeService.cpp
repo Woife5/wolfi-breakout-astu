@@ -6,6 +6,7 @@
 
 // Local includes
 #include "GameModeService.h"
+#include "brick/BrickInit.h"
 #include "Constants.h"
 #include "LevelData.h"
 
@@ -78,11 +79,12 @@ void GameModeService::LoadLevel(int level)
 
             char tile = layout[i][j];
 
-            if (tileToEntity.count(tile)) {
+            if (tileToHp.count(tile)) {
                 float x = -7.0f + j;
                 float y = -3.5f + (i / 2.0f);
 
-                AddEntity(tileToEntity[tile], x, y);
+                auto entity = AddEntity("RegularBrick", x, y);
+                InitBrick(*entity, tileToHp[tile]);
                 numBricks++;
             }
         }
