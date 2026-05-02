@@ -10,6 +10,7 @@
 #include <memory>
 #include <iostream>
 #include <vector>
+#include <cstdint>
 
 namespace astu {
 

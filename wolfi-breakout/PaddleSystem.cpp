@@ -76,8 +76,6 @@ void PaddleSystem::ProcessEntity(Entity& entity)
     }
 
     float paddleForce = paddleAxis->GetValue() * paddle.maxSpeed;
-
-    // Apply force to the paddle.
     float oldPos = pose.transform.GetTranslationX();
 
     // Check if the paddle is out of bounds.
@@ -86,6 +84,7 @@ void PaddleSystem::ProcessEntity(Entity& entity)
     } else if (oldPos + paddleForce < paddle.minX) {
         paddleForce = paddle.minX - oldPos;
     }
+
     pose.transform.SetTranslationX(oldPos + paddleForce);
     mainPaddlePositionX = pose.transform.GetTranslationX();
 }
