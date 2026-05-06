@@ -10,14 +10,16 @@ This repository contains the AST-Utilities repository and ASTU-Box2D as a submod
 
 The boilerplate code requires to have SDL 2.0 (Simple Direct Layer) installed. On macOS this is assumed to be located at "/Library/Frameworks/SDL2.framework/Versions/A/SDL2" by astu.
 
+Building the project additionally requires [Ninja](https://ninja-build.org/) (e.g. `brew install ninja` on macOS) and a C++23-capable compiler.
+
 Generate and compile the project by running:
 
 ```bash
-cmake .
-make
+cmake -S . -B build -G Ninja
+cmake --build build
 ```
 
-You may need to run `cmake . -DCMAKE_POLICY_VERSION_MINIMUM=3.5` if you are using a newer version of cmake.
+The resulting executable is located at `build/wolfibreakout/WolfiBreakout`.
 
 ## Acknowledgement
 
